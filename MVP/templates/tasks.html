@@ -1,0 +1,36 @@
+<!-- templates/tasks.html -->
+{% extends "base.html" %}
+{% block title %}Мои задачи{% endblock %}
+{% block content %}
+<h2>Список задач</h2>
+
+<!-- Фильтры -->
+<div class="mb-3">
+    <a href="{{ url_for('tasks') }}" class="btn btn-sm {% if filter == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %}">Все</a>
+    <a href="{{ url_for('tasks', filter='ready') }}" class="btn btn-sm {% if filter == 'ready' %}btn-primary{% else %}btn-outline-primary{% endif %}">Готовые</a>
+    <a href="{{ url_for('tasks', filter='canceled') }}" class="btn btn-sm {% if filter == 'canceled' %}btn-primary{% else %}btn-outline-primary{% endif %}">Отмененные</a>
+    <a href="{{ url_for('tasks', filter='reopened') }}" class="btn btn-sm {% if filter == 'reopened' %}btn-primary{% else %}btn-outline-primary{% endif %}">Переоткрытые</a>
+    <a href="{{ url_for('tasks', filter='not_actual') }}" class="btn btn-sm {% if filter == 'not_actual' %}btn-primary{% else %}btn-outline-primary{% endif %}">Неактуальные</a>
+</div>
+
+<!-- Список задач -->
+<div class="row">
+    {% for task in tasks %}
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card task-item">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{{ url_for('task_detail', task_id=task[0]) }}">{{ task[1] }}</a>
+                    </h5>
+                    <p class="card-text text-muted">Затрачено: {{ task[4] // 60 }} мин</p>
+                    <p class="card-text"><strong>Статус:</strong> {{ task[5].capitalize() }}</p>
+                    <div class="d-flex justify-content-between">
+                        <!-- Удаляем кнопку "Редактировать" -->
+                        <a href="{{ url_for('delete', task_id=task[0]) }}" class="btn btn-sm btn-danger">Удалить</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

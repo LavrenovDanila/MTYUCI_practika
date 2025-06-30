@@ -1,0 +1,59 @@
+<!-- templates/task_detail.html -->
+{% extends "base.html" %}
+{% block title %}Детали задачи{% endblock %}
+{% block content %}
+<h2 class="mb-4">Детали задачи</h2>
+<div class="card mb-4">
+    <div class="card-body">
+        <a href="{{ url_for('tasks') }}" class="btn btn-secondary mb-3">← Назад</a>
+
+        <p><strong>Содержание:</strong> {{ task[1] }}</p>
+        <p><strong>Описание:</strong> {{ task[2] or 'нет' }}</p>
+        <p><strong>Статус:</strong> {{ task[6] }}</p>
+        <p><strong>Дата создания:</strong> {{ task[4] }}</p>
+        <p><strong>Время затрачено:</strong> {{ task[5] // 60 }} мин</p>
+
+        <!-- ВСЁ содержимое должно быть внутри формы -->
+        <form method="post" action="{{ url_for('update_status', task_id=task[0]) }}">
+            <div class="mb-3">
+                <label for="status" class="form-label">Изменить статус:</label>
+                <select name="status" id="status" class="form-control">
+                    <option value="Активно" {% if task[6] == 'Активно' %}selected{% endif %}>Активно</option>
+                    <option value="Готово" {% if task[6] == 'Готово' %}selected{% endif %}>Готово</option>
+                    <option value="Отмена" {% if task[6] == 'Отмена' %}selected{% endif %}>Отмена</option>
+                    <option value="Переоткрыть" {% if task[6] == 'Переоткрыть' %}selected{% endif %}>Переоткрыть</option>
+                    <option value="Неактуально" {% if task[6] == 'Неактуально' %}selected{% endif %}>Неактуально</option>
+                </select>
+            </div>
+
+            <!-- Кнопка "Сохранить" теперь внутри формы -->
+            <div class="d-flex gap-2 mb-3">
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+                <a href="{{ url_for('edit_task', task_id=task[0]) }}" class="btn btn-warning">Редактировать</a>
+                <a href="{{ url_for('delete', task_id=task[0]) }}" class="btn btn-danger">Удалить</a>
+            </div>
+        </form>
+
+        <!-- Кнопки теперь внутри формы -->
+    </div>
+</div>
+
+<h3 class="mb-3">Комментарии</h3>
+<form method="post" action="{{ url_for('add_comment', task_id=task[0]) }}" class="mb-4">
+    <div class="mb-3">
+        <textarea name="comment" class="form-control" rows="3" placeholder="Оставить комментарий..." required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Отправить</button>
+</form>
+
+<div class="comments-section">
+    {% for comment in comments %}
+        <div class="card mb-2">
+            <div class="card-body">
+                <small class="text-muted">{{ comment[2] }} • {{ comment[1] }}</small>
+                <p class="mb-0">{{ comment[0] }}</p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

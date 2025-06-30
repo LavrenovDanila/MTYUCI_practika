@@ -1,0 +1,120 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1, h2, h3 {
+    margin-top: 0;
+}
+
+.navbar {
+    background-color: #343a40;
+    color: white;
+    padding: 10px 20px;
+}
+
+.navbar a {
+    color: white;
+    text-decoration: none;
+    margin-right: 15px;
+}
+
+.navbar a:hover {
+    text-decoration: underline;
+}
+
+.task-list {
+    list-style: none;
+    padding: 0;
+}
+
+.task-item {
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: white;
+}
+
+.task-item.done {
+    background-color: #e9ecef;
+    text-decoration: none;
+}
+
+.task-item .task-content {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.task-item .task-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.task-item .task-actions button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.task-item .task-actions button:hover {
+    background-color: #0056b3;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input[type="text"],
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+}
+
+.form-group button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.form-group button:hover {
+    background-color: #0056b3;
+}
+
+.comments-section {
+    margin-top: 20px;
+}
+
+.comment-item {
+    margin-bottom: 10px;
+    padding: 5px;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+}
+
+.comment-item strong {
+    font-size: 14px;
+    margin-right: 5px;
+}

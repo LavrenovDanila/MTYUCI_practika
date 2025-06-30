@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Создать новую задачу{% endblock %}
+{% block content %}
+<h2>Создать новую задачу</h2>
+<form method="post">
+    <div class="mb-3">
+        <input type="text" name="content" class="form-control" placeholder="Введите новую задачу..." required>
+    </div>
+    <button type="submit" class="btn btn-primary">Добавить</button>
+</form>
+{% endblock %}

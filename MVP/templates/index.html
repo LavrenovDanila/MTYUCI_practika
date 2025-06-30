@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Главная{% endblock %}
+{% block content %}
+<h2 class="mb-4">Создать новую задачу</h2>
+<form method="post" action="/add" class="mb-4">
+    <div class="mb-3">
+        <input type="text" name="content" class="form-control" placeholder="Введите новую задачу..." required>
+    </div>
+    <button type="submit" class="btn btn-primary">Добавить</button>
+</form>
+
+<h2 class="mb-4">Список задач</h2>
+<div class="row">
+    {% for task in tasks %}
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card task-item">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{{ url_for('task_detail', task_id=task[0]) }}">{{ task[1] }}</a> <!-- Нажатие на название задачи -->
+                    </h5>
+                    <p class="card-text text-muted">Затрачено: {{ task[4] // 60 }} мин</p>
+                    <p class="card-text"><strong>Статус:</strong> {{ task[5] }}</p>
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('toggle', task_id=task[0]) }}" class="btn btn-sm btn-secondary">
+                            {% if task[2] %}❌ Отменить{% else %}✅ Выполнить{% endif %}
+                        </a>
+                        <a href="{{ url_for('edit_task', task_id=task[0]) }}" class="btn btn-sm btn-warning">Редактировать</a> <!-- Кнопка редактирования -->
+                        <a href="{{ url_for('delete', task_id=task[0]) }}" class="btn btn-sm btn-danger">Удалить</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        <li class="page-item"><a class="page-link" href="{{ url_for('tasks', filter='all') }}">Все</a></li>
+        <li class="page-item"><a class="page-link" href="{{ url_for('tasks', filter='ready') }}">Готовые</a></li>
+        <li class="page-item"><a class="page-link" href="{{ url_for('tasks', filter='canceled') }}">Отмененные</a></li>
+        <li class="page-item"><a class="page-link" href="{{ url_for('tasks', filter='reopened') }}">Переоткрытые</a></li>
+        <li class="page-item"><a class="page-link" href="{{ url_for('tasks', filter='not_actual') }}">Неактуальные</a></li>
+    </ul>
+</nav>
+{% endblock %}
