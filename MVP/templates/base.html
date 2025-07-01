@@ -1,4 +1,3 @@
-<!-- templates/base.html -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -9,15 +8,15 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
 
-<!-- Навигационная панель -->
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="{{ url_for('tasks') }}">Task Tracker</a>
         <div class="ms-auto">
             {% if current_user.is_authenticated %}
-                <span class="text-white me-3">Залогинен как: {{ current_user.username }}</span> <!-- Отображаем имя пользователя -->
-                <a href="{{ url_for('create_task') }}" class="btn btn-primary me-2 btn-custom-size">Создать задачу</a> <!-- Кнопка "Создать задачу" -->
-                <a href="{{ url_for('logout') }}" class="btn btn-danger btn-custom-size">Выход</a> <!-- Кнопка "Выход" -->
+                <span class="text-white me-3">Залогинен как: {{ current_user.username }}</span> 
+                <a href="{{ url_for('create_task') }}" class="btn btn-primary me-2 btn-custom-size">Создать задачу</a> 
+                <a href="{{ url_for('logout') }}" class="btn btn-danger btn-custom-size">Выход</a> 
             {% else %}
                 <a href="{{ url_for('login') }}" class="btn btn-primary btn-sm me-2">Войти</a>
                 <a href="{{ url_for('register') }}" class="btn btn-secondary btn-sm">Регистрация</a>
@@ -26,12 +25,11 @@
     </div>
 </nav>
 
-<!-- Основной контент -->
+
 <div class="container my-4 flex-grow-1">
     {% block content %}{% endblock %}
 </div>
 
-<!-- Подвал -->
 <footer class="bg-dark text-white text-center py-3 mt-auto">
     &copy; 2025 Task Tracker | Powered by Flask
 </footer>
