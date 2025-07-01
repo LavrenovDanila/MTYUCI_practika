@@ -3,6 +3,7 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, curren
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 
+
 app = Flask(__name__)
 app.secret_key = 'super_secret_key'
 DB = 'database.db'
@@ -372,4 +373,4 @@ def delete_task_api(task_id):
 
 if __name__ == '__main__':
     init_db()
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=False, use_reloader=False)
