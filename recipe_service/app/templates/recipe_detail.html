@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}{{ recipe.title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h1 class="h3 mb-0">{{ recipe.title }}</h1>
+                <div>
+                    <form method="post" action="{{ url_for('main.toggle_favorite', recipe_id=recipe.id) }}" class="d-inline">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-sm btn-outline-warning">
+                            {% if recipe.id in favorites %}⭐ Убрать из избранного{% else %}☆ В избранное{% endif %}
+                        </button>
+                    </form>
+                    <a href="{{ url_for('main.edit_recipe', recipe_id=recipe.id) }}" class="btn btn-secondary btn-sm">Редактировать</a>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        Удалить
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if recipe.description %}
+                <p class="lead">{{ recipe.description }}</p>
+                <hr>
+                {% endif %}
+                <h5>Ингредиенты</h5>
+                <pre class="bg-light p-3 rounded">{{ recipe.ingredients }}</pre>
+                <h5>Инструкция</h5>
+                <pre class="bg-light p-3 rounded">{{ recipe.instructions }}</pre>
+                <div class="text-muted small">
+                    Создан: {{ recipe.created_at.strftime('%d.%m.%Y %H:%M') }}
+                    {% if recipe.updated_at != recipe.created_at %}
+                    (обновлён: {{ recipe.updated_at.strftime('%d.%m.%Y %H:%M') }})
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{{ url_for('main.index') }}" class="btn btn-outline-primary">← На главную</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для подтверждения удаления -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="{{ url_for('main.delete_recipe', recipe_id=recipe.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="modal-header">
+                    <h5 class="modal-title">Подтверждение удаления</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Вы уверены, что хотите удалить рецепт «{{ recipe.title }}»?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

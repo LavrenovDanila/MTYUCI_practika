@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Избранное{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">⭐ Избранные рецепты</h1>
+
+<div class="row">
+    {% for recipe in recipes %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">{{ recipe.title }}</h5>
+                <p class="card-text text-muted">{{ recipe.description or 'Без описания' }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="{{ url_for('main.recipe_detail', recipe_id=recipe.id) }}" class="btn btn-primary btn-sm">Подробнее</a>
+                    <form method="post" action="{{ url_for('main.toggle_favorite', recipe_id=recipe.id) }}" class="d-inline">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Удалить из избранного</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <p class="text-center">У вас пока нет избранных рецептов. Добавьте их на главной!</p>
+    </div>
+    {% endfor %}
+</div>
+
+<a href="{{ url_for('main.index') }}" class="btn btn-outline-primary mt-3">← На главную</a>
+{% endblock %}
