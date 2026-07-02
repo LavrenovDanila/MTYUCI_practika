@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анализ заполненности зала</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Анализ заполненности зала (подсчёт стульев)</h1>
+        <div class="upload-area">
+            <input type="file" id="imageInput" accept="image/*">
+            <button onclick="processImage()">Запустить обработку</button>
+        </div>
+        <div id="stats"></div>
+        <img id="resultImage" src="" alt="Результат обработки">
+        <div>
+            <a class="nav-link" href="/history">История запросов</a>
+        </div>
+    </div>
+
+    <script>
+        async function processImage() {
+            const fileInput = document.getElementById('imageInput');
+            const statsDiv = document.getElementById('stats');
+            const resultImg = document.getElementById('resultImage');
+
+            if (fileInput.files.length === 0) {
+                statsDiv.innerText = 'Пожалуйста, выберите изображение.';
+                statsDiv.style.color = '#c0392b';
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('image', file);
+
+            statsDiv.innerText = 'Обработка...';
+            statsDiv.style.color = '#2980b9';
+
+            try {
+                const response = await fetch('/process', { method: 'POST', body: formData });
+                const data = await response.json();
+
+                if (data.error) {
+                    statsDiv.innerText = 'Ошибка: ' + data.error;
+                    statsDiv.style.color = '#c0392b';
+                    return;
+                }
+
+                statsDiv.innerText = 'Стульев: ' + data.count + 
+                     ', Людей: ' + data.people + 
+                     ', Заполненность: ' + data.occupancy + '%';
+                statsDiv.style.color = '#27ae60';
+                resultImg.src = '/static/' + data.result_image + '?t=' + new Date().getTime();
+            } catch (error) {
+                statsDiv.innerText = 'Ошибка соединения с сервером.';
+                statsDiv.style.color = '#c0392b';
+            }
+        }
+    </script>
+</body>
+</html>
