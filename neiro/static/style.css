@@ -114,3 +114,16 @@ table tr:nth-child(even) {
     display: inline-block;
     margin-top: 15px;
 }
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+table {
+    width: 100%;
+    min-width: 700px; /* чтобы не сжималась слишком сильно */
+}
+td img {
+    max-width: 100px;
+    height: auto;
+}

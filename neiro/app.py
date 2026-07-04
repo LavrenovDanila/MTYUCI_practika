@@ -2,7 +2,8 @@ import os
 import sqlite3
 from datetime import datetime
 from io import BytesIO
-
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 import cv2
 import numpy as np
 from flask import Flask, request, jsonify, render_template, send_file
@@ -109,9 +110,9 @@ def process_image():
         cv2.putText(img_copy, 'person', (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
 
     timestamp_str = datetime.now().strftime('%Y%m%d_%H%M%S')
-    result_filename = f'result_{timestamp_str}.jpg'
+    result_filename = f'result_{timestamp_str}.png'  
     result_path = os.path.join('static', result_filename)
-    cv2.imwrite(result_path, img_copy)
+    cv2.imwrite(result_path, img_copy, [cv2.IMWRITE_PNG_COMPRESSION, 9]) 
 
     row_id = save_to_db(
         datetime.now().isoformat(),
@@ -157,31 +158,57 @@ def generate_report(req_id):
     timestamp, filename, chair_count, people_count, occupancy_percent, result_image = row
     result_path = os.path.join('static', result_image)
 
+    # Попробуем загрузить шрифт из текущей папки (DejaVuSans.ttf)
+    font_name = 'Helvetica'  # запасной вариант (без кириллицы)
+    try:
+        # Если файл лежит в корне проекта
+        pdfmetrics.registerFont(TTFont('DejaVuSans', 'DejaVuSans.ttf'))
+        font_name = 'DejaVuSans'
+    except Exception as e:
+        # Если не найден, можно попробовать системный путь (пример для Linux)
+        try:
+            pdfmetrics.registerFont(TTFont('DejaVuSans', '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'))
+            font_name = 'DejaVuSans'
+        except:
+            # Если ничего не сработало – остаёмся с Helvetica (кириллица не отобразится)
+            print('Шрифт с поддержкой кириллицы не найден, используется Helvetica')
+
+
     buffer = BytesIO()
     pdf = canvas.Canvas(buffer, pagesize=A4)
     width, height = A4
 
-    pdf.setFont('Helvetica-Bold', 16)
+    # Все текстовые строки используют зарегистрированный шрифт
+    pdf.setFont(font_name, 16)
     pdf.drawString(72, height - 72, 'Отчёт по анализу зала')
-    pdf.setFont('Helvetica', 12)
+    pdf.setFont(font_name, 12)
     pdf.drawString(72, height - 100, f'Время обработки: {timestamp}')
     pdf.drawString(72, height - 120, f'Исходный файл: {filename}')
     pdf.drawString(72, height - 140, f'Пустых стульев: {chair_count}')
     pdf.drawString(72, height - 160, f'Людей: {people_count}')
     pdf.drawString(72, height - 180, f'Заполненность: {occupancy_percent}%')
 
+
     if os.path.exists(result_path):
-        from PIL import Image
-        img = Image.open(result_path)
-        img_width, img_height = img.size
-        max_width = width - 144
-        max_height = height - 300
-        scale = min(max_width / img_width, max_height / img_height, 1.0)
-        draw_width = img_width * scale
-        draw_height = img_height * scale
-        x_offset = (width - draw_width) / 2
-        y_offset = 220
-        pdf.drawImage(result_path, x_offset, y_offset, width=draw_width, height=draw_height)
+        try:
+            from PIL import Image
+            img = Image.open(result_path)
+            img_width, img_height = img.size
+            max_width = width - 144
+            max_height = height - 300
+            scale = min(max_width / img_width, max_height / img_height, 1.0)
+            draw_width = img_width * scale
+            draw_height = img_height * scale
+            x_offset = (width - draw_width) / 2
+            y_offset = 220
+
+            pdf.drawImage(result_path, x_offset, y_offset, width=draw_width, height=draw_height)
+        except Exception as e:
+            pdf.setFont(font_name, 10)
+            pdf.drawString(72, 220, f'Ошибка вставки изображения: {str(e)}')
+    else:
+        pdf.setFont(font_name, 10)
+        pdf.drawString(72, 220, f'Файл не найден: {result_path}')
 
     pdf.save()
     buffer.seek(0)
